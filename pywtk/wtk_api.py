@@ -24,6 +24,7 @@ MET_ATTRS = ['density', 'power', 'pressure', 'temperature', 'wind_direction',
                'wind_speed']
 S3_BUCKET = "nrel-pds-wtk"
 S3_KEYDIR = "wtk-techno-economic/pywtk-data"
+S3_REGION = "us-west-2"
 if 'PYWTK_CACHE_DIR' in os.environ:
     # Set FCST and MET dirs appropriately
     WIND_MET_NC_DIR = os.path.join(os.environ['PYWTK_CACHE_DIR'], "met_data")
@@ -409,7 +410,8 @@ def site_from_cache(site_id, nc_dir):
     from botocore import UNSIGNED
     from botocore.client import Config
     _logger.info("site_from_cache: nc_dir is %s", nc_dir)
-    s3 = boto3.client('s3', config=Config(signature_version=UNSIGNED))
+    s3 = boto3.client(
+        's3', config=Config(region_name=S3_REGION, signature_version=UNSIGNED))
     site_file = os.path.join(nc_dir, str(int(site_id/500)), "%s.nc" % site_id)
     site_file_unix = site_file.replace("\\", "/")
     # Check for file in nc_dir
